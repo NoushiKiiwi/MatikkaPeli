@@ -14,22 +14,42 @@ c.execute('''CREATE TABLE IF NOT EXISTS timed
 
 # Function to generate math problems
 def generate_problem():
-    # Code goes here
-    pass
+    #Choose random value to determine the calculation type
+    value = random.randint(0,3)
+    #Add
+    if value == 0:
+        return str(random.randint(1,100)) + " + " + str(random.randint(1,100)) 
+    #Subtract
+    elif value == 1:
+        return  str(random.randint(1,100)) + " - " + str(random.randint(1,100))  
+    #Multiply
+    elif value == 2:
+        return str(random.randint(0,10)) + " * " + str(random.randint(0,10)) 
+    #Divide
+    elif value == 3:
+        return  str(random.randint(1,100)) + " / " + str(random.randint(1,10)) 
 
 # Function to play the game without a timer
 def play_game():
     score = 0
     while True:
         problem = generate_problem()
-        answer = input(f"What is {problem}? ")
+        #Check that the user input is a float
+        while True:
+            try:
+                answer = float(input(f"What is {problem}? "))
+                break
+            except:
+                print(f"Insert a numeric value as an answer!")
+            
+        correctAnswer = round(eval(problem), 1)
         if answer == "quit":
             break
-        elif int(answer) == eval(problem):
+        elif answer == correctAnswer:
             score += 1
             print("Correct!")
         else:
-            print(f"Incorrect. Your score was {score}.")
+            print(f"Incorrect. The right answer is {correctAnswer}. Your score was {score}.")
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
