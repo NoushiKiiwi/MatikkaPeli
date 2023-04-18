@@ -1,6 +1,8 @@
 import random
 import time
 import sqlite3
+import hashlib
+import os
 
 # Connect to the SQL database
 conn = sqlite3.connect('database.db')
@@ -29,11 +31,19 @@ def main_menu():
             print("Invalid choice. Please try again.")
 
 
-def create_account():
+def create_account(username, password):
     """Create and user account and insert it to database"""
+    salt = os.urandom(32)
+    
+    #Ask user inputs
+    print("Create account:")
     name = input("Create username: ")
     password = input("Create password: ")
-    # Implement SQL code to insert new username and password to user database
+
+    #Make secure password
+    hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    #Insert password to database
+    conn.execute("INSERT INTO Players (name, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
 
 
 def login():
