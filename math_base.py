@@ -34,7 +34,7 @@ def main_menu():
 def create_account(username, password):
     """Create and user account and insert it to database"""
     salt = os.urandom(32)
-    
+
     #Ask user inputs
     print("Create account:")
     name = input("Create username: ")
@@ -46,12 +46,22 @@ def create_account(username, password):
     conn.execute("INSERT INTO Players (name, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
 
 
-def login():
+def login(conn, username, password):
     """Ask for username and password and check if right from database"""
-    name = input("Please enter your name: ")
-    password = input("Please enter your password: ")
-    # Implement SQL code to check the player's credentials here
-    return name
+
+    fromdb = conn.execute("SELECT hash, salt FROM Players WHERE name = ?;", [username]).fetchall()
+
+    #Check if login went OK
+    if len(fromdb) != 0:
+        verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
+        if verrattava_hash == fromdb[0][0]:
+            print("Loging succeeded")
+        else:
+            print("Incorrect password")
+    else:
+        print("Incorrect username")
+    
+    return username
 
 
 def generate_problem():
