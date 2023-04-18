@@ -86,15 +86,14 @@ def play_timed_game():
     # Update the timed table with the player's score
     # Put SQL code to update the table here
 
-
+# Function to display the highscores show only top 5
 def display_highscores():
-    """Show highscore list"""
-    normal_scores = c.execute("SELECT * FROM normal").fetchall()
-    timed_scores = c.execute("SELECT * FROM timed").fetchall()
-    print("Normal Mode High Scores:")
+    normal_scores = c.execute("SELECT * FROM normal ORDER BY score DESC LIMIT 5").fetchall()
+    timed_scores = c.execute("SELECT * FROM timed ORDER BY score DESC LIMIT 5").fetchall()
+    print("Normal Mode High Scores Top-5:")
     for score in normal_scores:
         print(f"{score[0]}: {score[1]}")
-    print("\nTimed Mode High Scores:")
+    print("\nTimed Mode High Scores Top-5:")
     for score in timed_scores:
         print(f"{score[0]}: {score[1]}")
 
