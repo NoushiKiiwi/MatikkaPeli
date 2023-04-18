@@ -12,13 +12,46 @@ c.execute('''CREATE TABLE IF NOT EXISTS normal
 c.execute('''CREATE TABLE IF NOT EXISTS timed
              (name text, score int)''')
 
-# Function to generate math problems
+def main_menu():
+    """Prints the menu and checks input"""
+    print("Welcome to the Math Game!")
+    while True:
+        print("\nMAIN MENU")
+        print("1. See Highscores")
+        print("2. Play")
+        print("3. Play with 5 min timer")
+        print("4. Quit")
+        choice = input("Enter your choice: ")
+        choices = ["1", "2", "3", "4"]
+        if choice in choices:
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+def create_account():
+    """Create and user account and insert it to database"""
+    name = input("Create username: ")
+    password = input("Create password: ")
+    # Implement SQL code to insert new username and password to user database
+
+
+def login():
+    """Ask for username and password and check if right from database"""
+    name = input("Please enter your name: ")
+    password = input("Please enter your password: ")
+    # Implement SQL code to check the player's credentials here
+    return name
+
+
 def generate_problem():
+    """Generates the math functions"""
     # Code goes here
     pass
 
-# Function to play the game without a timer
+
 def play_game():
+    """Game mode where the game stops if you answer wrong"""
     score = 0
     while True:
         problem = generate_problem()
@@ -34,8 +67,9 @@ def play_game():
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
 
-# Function to play the game with a 5 minute timer
+
 def play_timed_game():
+    """Game mode where the game stops when timer runs out of time"""
     score = 0
     start_time = time.time()
     while time.time() - start_time < 300:
@@ -52,8 +86,9 @@ def play_timed_game():
     # Update the timed table with the player's score
     # Put SQL code to update the table here
 
-# Function to display the highscores
+
 def display_highscores():
+    """Show highscore list"""
     normal_scores = c.execute("SELECT * FROM normal").fetchall()
     timed_scores = c.execute("SELECT * FROM timed").fetchall()
     print("Normal Mode High Scores:")
@@ -63,39 +98,26 @@ def display_highscores():
     for score in timed_scores:
         print(f"{score[0]}: {score[1]}")
 
-# Function to prompt the user for their name and password
-def get_credentials():
-    name = input("Please enter your name: ")
-    password = input("Please enter your password: ")
-    # Implement SQL code to check the player's credentials here
-    return name
 
-# Main menu function
-def main_menu():
-    print("Welcome to the Math Game!")
+def main():
+
+    # Start the game by getting the player's credentials
+    player_name = login()
+
     while True:
-        print("\nMAIN MENU")
-        print("1. See Highscores")
-        print("2. Play")
-        print("3. Play with 5 min timer")
-        print("4. Quit")
-        choice = input("Enter your choice: ")
-        if choice == "1":
+        choice = main_menu()
+        if choice == "4":
+            print("Thank you for playing!")
+            break
+        elif choice == "1":
             display_highscores()
         elif choice == "2":
             play_game()
-        elif choice == "3":
-            play_timed_game()
-        elif choice == "4":
-            break
         else:
-            print("Invalid choice. Please try again.")
+            play_timed_game()
 
-# Start the game by getting the player's credentials
-player_name = get_credentials()
+    # Close the SQL connection
+    conn.close()
 
-# Display the main menu
-main_menu()
-
-# Close the SQL connection
-conn.close()
+if __name__ == "__main__":
+    main()
