@@ -7,10 +7,23 @@ conn = sqlite3.connect('database.db')
 c = conn.cursor()
 
 # Create tables if don't exist
-c.execute('''CREATE TABLE IF NOT EXISTS normal
-             (name text, score int)''')
-c.execute('''CREATE TABLE IF NOT EXISTS timed
-             (name text, score int)''')
+c.execute('''CREATE TABLE IF NOT EXISTS Players(
+            id INTEGER PRIMARY KEY, 
+            username VARCHAR(40) NOT NULL UNIQUE, 
+            password VARCHAR(60) NOT NULL);)''')
+c.execute('''CREATE TABLE IF NOT EXISTS ScoreAmounts(
+            id INTEGER PRIMARY KEY, 
+            playerId INTEGER NOT NULL, 
+            score INTEGER NOT NULL, 
+            gameMode VARCHAR(10), 
+            FOREIGN KEY (playerId) REFERENCES Players(id));''')
+c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
+            id INTEGER PRIMARY KEY, 
+            playerId INTEGER NOT NULL, 
+            score INTEGER NOT NULL, 
+            gameMode VARCHAR(10), 
+            seconds INTEGER, 
+            FOREIGN KEY (playerId) REFERENCES Players(id));''')
 
 # Function to generate math problems
 def generate_problem():
@@ -54,8 +67,8 @@ def play_timed_game():
 
 # Function to display the highscores show only top 5
 def display_highscores():
-    normal_scores = c.execute("SELECT * FROM normal ORDER BY score DESC LIMIT 5").fetchall()
-    timed_scores = c.execute("SELECT * FROM timed ORDER BY score DESC LIMIT 5").fetchall()
+    normal_scores = c.execute("SELECT * FROM ScoreAmounts ORDER BY score DESC LIMIT 5").fetchall()
+    timed_scores = c.execute("SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
     print("Normal Mode High Scores Top-5:")
     for score in normal_scores:
         print(f"{score[0]}: {score[1]}")
