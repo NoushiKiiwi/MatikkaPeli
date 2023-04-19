@@ -3,7 +3,9 @@ CREATE DATABASE mathgamedb;
 CREATE TABLE Players(
     id INTEGER PRIMARY KEY, 
     username VARCHAR(40) NOT NULL UNIQUE, 
-    password VARCHAR(60) NOT NULL);
+    password VARCHAR(60) NOT NULL),
+    hash VARCHAR(60),
+    salt VARCHAR(60);
 
 CREATE TABLE ScoreAmounts(
     id INTEGER PRIMARY KEY, 
