@@ -19,15 +19,14 @@ c.execute('''CREATE TABLE IF NOT EXISTS ScoreAmounts(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
-            gameMode VARCHAR(10), 
-            FOREIGN KEY (playerId) REFERENCES Players(id));''')
+            gameMode VARCHAR(10)''')
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
             gameMode VARCHAR(10), 
-            seconds INTEGER, 
-            FOREIGN KEY (playerId) REFERENCES Players(id));''')
+            seconds INTEGER''')
+#playerId can be changed to playerName if name becomes primary key.
 
 def main_menu():
     """Prints the menu and checks input"""
@@ -120,8 +119,12 @@ def play_game():
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
+    add_score(playerId, score)
 
-
+#Add score to the table ScoreAmounts
+def add_score(playerId, score):
+    c.execute("INSERT INTO ScoreAmounts (playerId, score) VALUES (?, ?)", [playerId, score])
+    
 def play_timed_game():
     """Game mode where the game stops when timer runs out of time"""
     score = 0
@@ -139,6 +142,10 @@ def play_timed_game():
             break
     # Update the timed table with the player's score
     # Put SQL code to update the table here
+    add_timedScore(playerId, score, 300)
+    
+def add_timedScore(playerId, score, seconds)
+    c.execute("INSERT INTO ScoreTimed (playerId, score, seconds) VALUES (?, ?, ?)", [playerId, score, seconds])
 
 # Function to display the highscores show only top 5
 def display_highscores():
