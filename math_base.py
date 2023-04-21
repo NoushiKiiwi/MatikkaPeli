@@ -32,6 +32,21 @@ c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             seconds INTEGER)''')
 #playerId can be changed to playerName if name becomes primary key.
 
+
+def account_menu():
+    """Prints the login and account creation menu"""
+    while True:
+        print("\nLogin or create account."
+            "\n1. Login"
+            "\n2. Create account")
+        choice = input("Enter your choice: ")
+        choices = ["1", "2"]
+        if choice in choices:
+            return choice
+        else:
+            print("Invalid choice. Please try again.")
+
+
 def main_menu():
     """Prints the menu and checks input"""
     print("Welcome to the Math Game!")
@@ -81,8 +96,9 @@ def login(conn, username, password):
     
     return username
 
-# Function to generate math problems
+
 def generate_problem():
+    """Generates math problems"""
     #Choose random value to determine the calculation type
     value = random.randint(0,3)
     #Add
@@ -98,8 +114,9 @@ def generate_problem():
     elif value == 3:
         return  str(random.randint(1,100)) + " / " + str(random.randint(1,10)) 
 
-# Function to play the game without a timer
+
 def play_game():
+    """Mode where you play until wrong answer"""
     score = 0
     while True:
         problem = generate_problem()
@@ -124,12 +141,14 @@ def play_game():
     # Put SQL code to update the table here
     #add_score(playerId, score)
 
-#Add score to the table ScoreAmounts
+
 def add_score(playerId, score):
+    """Add the score to the database"""
     c.execute("INSERT INTO ScoreAmounts (playerId, score) VALUES (?, ?)", [playerId, score])
 
-# Function to play the game with a 5 minute timer
+
 def play_timed_game():
+    """Mode where you play until time runs out"""
     score = 0
     start_time = time.time()
     while time.time() - start_time < 300:
@@ -152,12 +171,16 @@ def play_timed_game():
     # Update the timed table with the player's score
     # Put SQL code to update the table here
     #add_timedScore(playerId, score, 300)
-    
+
+
 def add_timedScore(playerId, score, seconds):
+    """Add the score to the database"""
     c.execute("INSERT INTO ScoreTimed (playerId, score, seconds) VALUES (?, ?, ?)", [playerId, score, seconds])
 
-# Function to display the highscores
+
+
 def display_highscores():
+    """Display the highscores"""
     normal_scores = c.execute("SELECT * FROM normal").fetchall()
     timed_scores = c.execute("SELECT * FROM timed").fetchall()
     print("Normal Mode High Scores:")
@@ -167,10 +190,19 @@ def display_highscores():
     for score in timed_scores:
         print(f"{score[0]}: {score[1]}")
 
+
 def main():
 
     # Start the game by getting the player's credentials
     #player_name = login()
+    while True:
+        account_choice = account_menu()
+        if account_choice == "1":
+            login()
+            break
+        else:
+            create_account()
+            break
 
     while True:
         choice = main_menu()
