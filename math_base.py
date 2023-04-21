@@ -9,23 +9,27 @@ conn = sqlite3.connect('database.db')
 c = conn.cursor()
 
 # Create tables if don't exist
+c.execute('''CREATE TABLE IF NOT EXISTS normal
+             (name text, score int)''')
+c.execute('''CREATE TABLE IF NOT EXISTS timed
+             (name text, score int)''')
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
             id INTEGER PRIMARY KEY, 
             username VARCHAR(40) NOT NULL UNIQUE, 
-            password VARCHAR(60) NOT NULL,)
+            password VARCHAR(60) NOT NULL,
             hash VARCHAR(60),
-            salt VARCHAR(60);)''')
+            salt VARCHAR(60))''')
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreAmounts(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
-            gameMode VARCHAR(10)''')
+            gameMode VARCHAR(10))''')
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
             gameMode VARCHAR(10), 
-            seconds INTEGER''')
+            seconds INTEGER)''')
 #playerId can be changed to playerName if name becomes primary key.
 
 def main_menu():
@@ -40,7 +44,7 @@ def main_menu():
         choice = input("Enter your choice: ")
         choices = ["1", "2", "3", "4"]
         if choice in choices:
-            break
+            return choice
         else:
             print("Invalid choice. Please try again.")
 
@@ -77,9 +81,9 @@ def login(conn, username, password):
     
     return username
 
-
+# Function to generate math problems
 def generate_problem():
-     #Choose random value to determine the calculation type
+    #Choose random value to determine the calculation type
     value = random.randint(0,3)
     #Add
     if value == 0:
@@ -94,9 +98,8 @@ def generate_problem():
     elif value == 3:
         return  str(random.randint(1,100)) + " / " + str(random.randint(1,10)) 
 
-
+# Function to play the game without a timer
 def play_game():
-    """Game mode where the game stops if you answer wrong"""
     score = 0
     while True:
         problem = generate_problem()
@@ -111,7 +114,7 @@ def play_game():
         correctAnswer = round(eval(problem), 1)
         if answer == "quit":
             break
-        elif int(answer) == eval(problem):
+        elif answer == correctAnswer:
             score += 1
             print("Correct!")
         else:
@@ -119,63 +122,74 @@ def play_game():
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
-    add_score(playerId, score)
+    #add_score(playerId, score)
 
 #Add score to the table ScoreAmounts
 def add_score(playerId, score):
     c.execute("INSERT INTO ScoreAmounts (playerId, score) VALUES (?, ?)", [playerId, score])
-    
+
+# Function to play the game with a 5 minute timer
 def play_timed_game():
-    """Game mode where the game stops when timer runs out of time"""
     score = 0
     start_time = time.time()
     while time.time() - start_time < 300:
         problem = generate_problem()
-        answer = input(f"What is {problem}? ")
+        while True:
+            try:
+                answer = float(input(f"What is {problem}? "))
+                break
+            except:
+                print(f"Insert a numeric value as an answer!")
+        correctAnswer = round(eval(problem), 1)
         if answer == "quit":
             break
-        elif int(answer) == eval(problem):
+        elif answer == correctAnswer:
             score += 1
             print("Correct!")
         else:
-            print(f"Incorrect. Your score was {score}.")
+            print(f"Incorrect. The right answer is {correctAnswer}. Your score was {score}.")
             break
     # Update the timed table with the player's score
     # Put SQL code to update the table here
-    add_timedScore(playerId, score, 300)
+    #add_timedScore(playerId, score, 300)
     
-def add_timedScore(playerId, score, seconds)
+def add_timedScore(playerId, score, seconds):
     c.execute("INSERT INTO ScoreTimed (playerId, score, seconds) VALUES (?, ?, ?)", [playerId, score, seconds])
 
-# Function to display the highscores show only top 5
+# Function to display the highscores
 def display_highscores():
-    normal_scores = c.execute("SELECT * FROM ScoreAmounts ORDER BY score DESC LIMIT 5").fetchall()
-    timed_scores = c.execute("SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
-    print("Normal Mode High Scores Top-5:")
+    normal_scores = c.execute("SELECT * FROM normal").fetchall()
+    timed_scores = c.execute("SELECT * FROM timed").fetchall()
+    print("Normal Mode High Scores:")
     for score in normal_scores:
         print(f"{score[0]}: {score[1]}")
-    print("\nTimed Mode High Scores Top-5:")
+    print("\nTimed Mode High Scores:")
     for score in timed_scores:
         print(f"{score[0]}: {score[1]}")
-
 
 def main():
 
     # Start the game by getting the player's credentials
-    player_name = login()
+    #player_name = login()
 
     while True:
-        choice = main_menu()
-        if choice == "4":
-            print("Thank you for playing!")
-            break
-        elif choice == "1":
+        print("\nMAIN MENU")
+        print("1. See Highscores")
+        print("2. Play")
+        print("3. Play with 5 min timer")
+        print("4. Quit")
+        choice = input("Enter your choice: ")
+        if choice == "1":
             display_highscores()
         elif choice == "2":
             play_game()
-        else:
+        elif choice == "3":
             play_timed_game()
-
+        elif choice == "4":
+            break
+        else:
+            print("Invalid choice. Please try again.")
+        
     # Close the SQL connection
     conn.close()
 
