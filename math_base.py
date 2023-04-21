@@ -1,18 +1,18 @@
 import random
 import time
 import sqlite3
+import hashlib
+import os
 
 # Connect to the SQL database
 conn = sqlite3.connect('database.db')
 c = conn.cursor()
 
 # Create tables if don't exist
-<<<<<<< Updated upstream
 c.execute('''CREATE TABLE IF NOT EXISTS normal
              (name text, score int)''')
 c.execute('''CREATE TABLE IF NOT EXISTS timed
              (name text, score int)''')
-=======
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
             id INTEGER PRIMARY KEY, 
             username VARCHAR(40) NOT NULL UNIQUE, 
@@ -81,8 +81,6 @@ def login(conn, username, password):
     
     return username
 
->>>>>>> Stashed changes
-
 # Function to generate math problems
 def generate_problem():
     #Choose random value to determine the calculation type
@@ -124,10 +122,11 @@ def play_game():
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
-<<<<<<< Updated upstream
-=======
     #add_score(playerId, score)
->>>>>>> Stashed changes
+
+#Add score to the table ScoreAmounts
+def add_score(playerId, score):
+    c.execute("INSERT INTO ScoreAmounts (playerId, score) VALUES (?, ?)", [playerId, score])
 
 # Function to play the game with a 5 minute timer
 def play_timed_game():
@@ -152,13 +151,10 @@ def play_timed_game():
             break
     # Update the timed table with the player's score
     # Put SQL code to update the table here
-<<<<<<< Updated upstream
-=======
     #add_timedScore(playerId, score, 300)
     
 def add_timedScore(playerId, score, seconds):
     c.execute("INSERT INTO ScoreTimed (playerId, score, seconds) VALUES (?, ?, ?)", [playerId, score, seconds])
->>>>>>> Stashed changes
 
 # Function to display the highscores
 def display_highscores():
@@ -171,24 +167,11 @@ def display_highscores():
     for score in timed_scores:
         print(f"{score[0]}: {score[1]}")
 
-# Function to prompt the user for their name and password
-def get_credentials():
-    name = input("Please enter your name: ")
-    password = input("Please enter your password: ")
-    # Implement SQL code to check the player's credentials here
-    return name
-
-<<<<<<< Updated upstream
-# Main menu function
-def main_menu():
-    print("Welcome to the Math Game!")
-=======
 def main():
 
     # Start the game by getting the player's credentials
     #player_name = login()
 
->>>>>>> Stashed changes
     while True:
         print("\nMAIN MENU")
         print("1. See Highscores")
@@ -206,12 +189,9 @@ def main():
             break
         else:
             print("Invalid choice. Please try again.")
+        
+    # Close the SQL connection
+    conn.close()
 
-# Start the game by getting the player's credentials
-player_name = get_credentials()
-
-# Display the main menu
-main_menu()
-
-# Close the SQL connection
-conn.close()
+if __name__ == "__main__":
+    main()
