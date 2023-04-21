@@ -173,22 +173,15 @@ def main():
     #player_name = login()
 
     while True:
-        print("\nMAIN MENU")
-        print("1. See Highscores")
-        print("2. Play")
-        print("3. Play with 5 min timer")
-        print("4. Quit")
-        choice = input("Enter your choice: ")
+        choice = main_menu()
         if choice == "1":
             display_highscores()
         elif choice == "2":
             play_game()
         elif choice == "3":
             play_timed_game()
-        elif choice == "4":
-            break
         else:
-            print("Invalid choice. Please try again.")
+            break
         
     # Close the SQL connection
     conn.close()
