@@ -73,7 +73,7 @@ def create_account():
     #Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
-    conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+    c.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
     return username
 
 
