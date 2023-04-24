@@ -73,22 +73,25 @@ def create_account():
     #Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
-    c.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+    conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
     return username
 
 
 def login():
     """Ask for username and password and check if right from database"""
-    username = input("Insert username: ")
-    password = input("Insert password: ")
-
+    # Fetch the data from the players table
+    player = c.execute("SELECT * FROM players")
     fromdb = c.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
-    #Check if login went OK
+    # get user input
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+
+    # check if the user exists and verify their password
     if len(fromdb) != 0:
         verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
         if verrattava_hash == fromdb[0][0]:
-            print("Loging succeeded")
+            print("Login succeeded")
         else:
             print("Incorrect password")
     else:
