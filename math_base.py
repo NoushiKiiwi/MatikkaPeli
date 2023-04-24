@@ -5,25 +5,24 @@ import hashlib
 import os
 
 # Connect to the SQL database
-conn = sqlite3.connect('database.db')
+conn = sqlite3.connect('mathgamedb.db')
 c = conn.cursor()
 
 # Create tables if don't exist
-c.execute('''CREATE TABLE IF NOT EXISTS normal
-             (name text, score int)''')
-c.execute('''CREATE TABLE IF NOT EXISTS timed
-             (name text, score int)''')
+#Players username table
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
             id INTEGER PRIMARY KEY, 
             username VARCHAR(40) NOT NULL UNIQUE, 
             password VARCHAR(60) NOT NULL,
             hash VARCHAR(60),
             salt VARCHAR(60))''')
+#Score table in normal game
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreAmounts(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
             gameMode VARCHAR(10))''')
+#Score table in timed game
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             id INTEGER PRIMARY KEY, 
             playerId INTEGER NOT NULL, 
@@ -76,13 +75,13 @@ def create_account(username, password):
     #Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
-    conn.execute("INSERT INTO Players (name, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+    conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
 
 
 def login(conn, username, password):
     """Ask for username and password and check if right from database"""
 
-    fromdb = conn.execute("SELECT hash, salt FROM Players WHERE name = ?;", [username]).fetchall()
+    fromdb = conn.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
     #Check if login went OK
     if len(fromdb) != 0:
