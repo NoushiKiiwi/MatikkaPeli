@@ -61,13 +61,13 @@ def main_menu():
             print("Invalid choice. Please try again.")
 
 
-def create_account(username, password):
+def create_account():
     """Create and user account and insert it to database"""
     salt = os.urandom(32)
 
     #Ask user inputs
     print("Create account:")
-    name = input("Create username: ")
+    username = input("Create username: ")
     password = input("Create password: ")
 
     #Make secure password
