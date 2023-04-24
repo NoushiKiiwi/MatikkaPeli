@@ -77,12 +77,12 @@ def create_account():
     return username
 
 
-def login(conn):
+def login():
     """Ask for username and password and check if right from database"""
     username = input("Insert username: ")
     password = input("Insert password: ")
 
-    fromdb = conn.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
+    fromdb = c.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
     #Check if login went OK
     if len(fromdb) != 0:
