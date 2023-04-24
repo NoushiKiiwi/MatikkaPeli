@@ -11,25 +11,23 @@ c = conn.cursor()
 # Create tables if don't exist
 #Players username table
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
-            id INTEGER PRIMARY KEY, 
-            username VARCHAR(40) NOT NULL UNIQUE, 
+            username VARCHAR(40) PRIMARY KEY, 
             password VARCHAR(60) NOT NULL,
             hash VARCHAR(60),
             salt VARCHAR(60))''')
 #Score table in normal game
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreAmounts(
             id INTEGER PRIMARY KEY, 
-            playerId INTEGER NOT NULL, 
+            username INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
             gameMode VARCHAR(10))''')
 #Score table in timed game
 c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             id INTEGER PRIMARY KEY, 
-            playerId INTEGER NOT NULL, 
+            username INTEGER NOT NULL, 
             score INTEGER NOT NULL, 
             gameMode VARCHAR(10), 
             seconds INTEGER)''')
-#playerId can be changed to playerName if name becomes primary key.
 
 
 def account_menu():
@@ -138,12 +136,12 @@ def play_game():
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
-    #add_score(playerId, score)
+    #add_score(username, score)
 
 
-def add_score(playerId, score):
+def add_score(username, score):
     """Add the score to the database"""
-    c.execute("INSERT INTO ScoreAmounts (playerId, score) VALUES (?, ?)", [playerId, score])
+    c.execute("INSERT INTO ScoreAmounts (username, score) VALUES (?, ?)", [username, score])
 
 
 def play_timed_game():
@@ -169,12 +167,12 @@ def play_timed_game():
             break
     # Update the timed table with the player's score
     # Put SQL code to update the table here
-    #add_timedScore(playerId, score, 300)
+    #add_timedScore(username, score, 300)
 
 
-def add_timedScore(playerId, score, seconds):
+def add_timedScore(username, score, seconds):
     """Add the score to the database"""
-    c.execute("INSERT INTO ScoreTimed (playerId, score, seconds) VALUES (?, ?, ?)", [playerId, score, seconds])
+    c.execute("INSERT INTO ScoreTimed (username, score, seconds) VALUES (?, ?, ?)", [username, score, seconds])
 
 
 
