@@ -150,6 +150,7 @@ def add_score(playerId, score):
 def play_timed_game():
     """Mode where you play until time runs out"""
     score = 0
+    wrong = 0
     start_time = time.time()
     while time.time() - start_time < 300:
         problem = generate_problem()
@@ -164,10 +165,9 @@ def play_timed_game():
             break
         elif answer == correctAnswer:
             score += 1
-            print("Correct!")
         else:
-            print(f"Incorrect. The right answer is {correctAnswer}. Your score was {score}.")
-            break
+            wrong += 1
+    print(f"Times up! You got {score} correct and {wrong} wrong!")
     # Update the timed table with the player's score
     # Put SQL code to update the table here
     #add_timedScore(playerId, score, 300)
@@ -195,6 +195,8 @@ def main():
 
     # Start the game by getting the player's credentials
     #player_name = login()
+
+    '''
     while True:
         account_choice = account_menu()
         if account_choice == "1":
@@ -203,6 +205,8 @@ def main():
         else:
             create_account()
             break
+    
+    '''  
 
     while True:
         choice = main_menu()
