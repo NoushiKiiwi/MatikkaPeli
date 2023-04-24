@@ -77,8 +77,10 @@ def create_account():
     return username
 
 
-def login(conn, username, password):
+def login(conn):
     """Ask for username and password and check if right from database"""
+    username = input("Insert username: ")
+    password = input("Insert password: ")
 
     fromdb = conn.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
