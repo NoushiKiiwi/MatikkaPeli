@@ -74,18 +74,18 @@ def create_account():
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
     conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+
     return username
 
 
 def login():
     """Ask for username and password and check if right from database"""
-    # Fetch the data from the players table
-    player = c.execute("SELECT * FROM players")
-    fromdb = c.execute("SELECT hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
-
     # get user input
     username = input("Enter your username: ")
     password = input("Enter your password: ")
+
+    # Fetch the data from the players table
+    fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
     # check if the user exists and verify their password
     if len(fromdb) != 0:
@@ -179,7 +179,6 @@ def play_timed_game(username):
 def add_timedScore(username, score, seconds):
     """Add the score to the database"""
     c.execute("INSERT INTO ScoreTimed (username, score, seconds) VALUES (?, ?, ?)", [username, score, seconds])
-
 
 
 def display_highscores():
