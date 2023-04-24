@@ -74,6 +74,7 @@ def create_account():
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
     conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+    return username
 
 
 def login(conn, username, password):
@@ -112,7 +113,7 @@ def generate_problem():
         return  str(random.randint(1,100)) + " / " + str(random.randint(1,10)) 
 
 
-def play_game():
+def play_game(username):
     """Mode where you play until wrong answer"""
     score = 0
     while True:
@@ -136,7 +137,7 @@ def play_game():
             break
     # In here update the normal table with the player's score
     # Put SQL code to update the table here
-    #add_score(username, score)
+    add_score(username, score)
 
 
 def add_score(username, score):
@@ -144,7 +145,7 @@ def add_score(username, score):
     c.execute("INSERT INTO ScoreAmounts (username, score) VALUES (?, ?)", [username, score])
 
 
-def play_timed_game():
+def play_timed_game(username):
     """Mode where you play until time runs out"""
     score = 0
     start_time = time.time()
@@ -167,7 +168,7 @@ def play_timed_game():
             break
     # Update the timed table with the player's score
     # Put SQL code to update the table here
-    #add_timedScore(username, score, 300)
+    add_timedScore(username, score, 300)
 
 
 def add_timedScore(username, score, seconds):
@@ -192,13 +193,14 @@ def main():
 
     # Start the game by getting the player's credentials
     #player_name = login()
+    username = ""
     while True:
         account_choice = account_menu()
         if account_choice == "1":
-            login()
+            username = login()
             break
         else:
-            create_account()
+            username = create_account()
             break
 
     while True:
@@ -206,9 +208,9 @@ def main():
         if choice == "1":
             display_highscores()
         elif choice == "2":
-            play_game()
+            play_game(username)
         elif choice == "3":
-            play_timed_game()
+            play_timed_game(username)
         else:
             break
         
