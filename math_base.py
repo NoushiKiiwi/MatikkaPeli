@@ -84,10 +84,11 @@ def login():
     password = input("Enter your password: ")
 
     # Fetch the data from the players table
-    c.execute("SELECT * FROM players")
+    test = c.execute("SELECT * FROM players")
     users = c.fetchall()
     fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
+    print(test)
     print("testiprint", users)
     
     # check if the user exists
