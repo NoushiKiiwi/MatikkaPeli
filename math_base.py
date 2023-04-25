@@ -11,8 +11,7 @@ c = conn.cursor()
 # Create tables if don't exist
 #Players username table
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
-            username VARCHAR(40) PRIMARY KEY, 
-            password VARCHAR(60) NOT NULL,
+            username VARCHAR(40) PRIMARY KEY,
             hash VARCHAR(60),
             salt VARCHAR(60))''')
 #Score table in normal game
@@ -85,10 +84,13 @@ def login():
     password = input("Enter your password: ")
 
     # Fetch the data from the players table
-    c.execute("SELECT * FROM players")
+    test = c.execute("SELECT * FROM players")
     users = c.fetchall()
     fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
+    print(test)
+    print("testiprint", users)
+    
     # check if the user exists
     if username in users and users[username] == password:
         print(f"Welcome {username}!")
@@ -102,8 +104,6 @@ def login():
             print("Login succeeded")
         else:
             print("Incorrect password")
-    else:
-        print("Incorrect username")
     
     return username
 
