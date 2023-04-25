@@ -183,8 +183,8 @@ def add_timedScore(username, score, seconds):
 
 def display_highscores():
     """Display the highscores"""
-    normal_scores = c.execute("SELECT * FROM normal").fetchall()
-    timed_scores = c.execute("SELECT * FROM timed").fetchall()
+    normal_scores = c.execute("SELECT * FROM ScoreAmounts ORDER BY score DESC LIMIT 5").fetchall()
+    timed_scores = c.execute("SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
     print("Normal Mode High Scores:")
     for score in normal_scores:
         print(f"{score[0]}: {score[1]}")
