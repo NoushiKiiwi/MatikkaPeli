@@ -11,8 +11,7 @@ c = conn.cursor()
 # Create tables if don't exist
 #Players username table
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
-            username VARCHAR(40) PRIMARY KEY, 
-            password VARCHAR(60) NOT NULL,
+            username VARCHAR(40) PRIMARY KEY,
             hash VARCHAR(60),
             salt VARCHAR(60))''')
 #Score table in normal game
