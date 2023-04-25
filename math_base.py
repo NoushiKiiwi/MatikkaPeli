@@ -73,7 +73,7 @@ def create_account():
     #Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
-    conn.execute("INSERT INTO Players (username, password, hash, salt) VALUES (?, ?, ?, ?); ", [username, password, hashed_password, salt])
+    conn.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?, ?); ", [username, hashed_password, salt])
 
     return username
 
@@ -85,9 +85,17 @@ def login():
     password = input("Enter your password: ")
 
     # Fetch the data from the players table
+    c.execute("SELECT * FROM players")
+    users = c.fetchall()
     fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
-    # check if the user exists and verify their password
+    # check if the user exists
+    if username in users and users[username] == password:
+        print(f"Welcome {username}!")
+    else:
+        print("Incorrect username or password.")
+        
+    #verify their password
     if len(fromdb) != 0:
         verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
         if verrattava_hash == fromdb[0][0]:
@@ -194,6 +202,8 @@ def display_highscores():
 
 
 def main():
+
+    create_account(conn, )
 
     # Start the game by getting the player's credentials
     #player_name = login()
