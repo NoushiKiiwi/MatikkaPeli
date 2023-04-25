@@ -131,18 +131,21 @@ def play_game(username):
     score = 0
     while True:
         problem = generate_problem()
-        #Check that the user input is a float
+        #Checking for correct input
         while True:
+            answer = input(f"What is {problem}? ")
+            #Typing 'quit' exits the game
+            if answer == "quit":
+                return
+            #Check that the answer is a number
             try:
-                answer = float(input(f"What is {problem}? "))
+                answer = float(answer)
                 break
             except:
                 print(f"Insert a numeric value as an answer!")
             
         correctAnswer = round(eval(problem), 1)
-        if answer == "quit":
-            break
-        elif answer == correctAnswer:
+        if answer == correctAnswer:
             score += 1
             print("Correct!")
         else:
@@ -165,16 +168,20 @@ def play_timed_game(username):
     start_time = time.time()
     while time.time() - start_time < 300:
         problem = generate_problem()
+        #Checking for correct input
         while True:
+            answer = input(f"What is {problem}? ")
+            #Typing 'quit' exits the game
+            if answer == "quit":
+                return
+            #Check that the answer is a number
             try:
-                answer = float(input(f"What is {problem}? "))
+                answer = float(answer)
                 break
             except:
                 print(f"Insert a numeric value as an answer!")
         correctAnswer = round(eval(problem), 1)
-        if answer == "quit":
-            break
-        elif answer == correctAnswer:
+        if answer == correctAnswer:
             score += 1
         else:
             wrong += 1
