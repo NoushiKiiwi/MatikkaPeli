@@ -61,7 +61,7 @@ def main_menu():
             print("Invalid choice. Please try again.")
 
 
-def create_account():
+def create_account(username, password):
     """Create and user account and insert it to database"""
     salt = os.urandom(32)
 
@@ -73,7 +73,7 @@ def create_account():
     #Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     #Insert password to database
-    conn.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", [username, hashed_password, salt])
+    c.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", [username, hashed_password, salt])
 
     return username
 
@@ -209,8 +209,6 @@ def display_highscores():
 
 
 def main():
-
-    # TÄHÄN TULEE TESTI create_account(conn, )
 
     # Start the game by getting the player's credentials
     #player_name = login()
