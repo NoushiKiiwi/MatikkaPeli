@@ -210,7 +210,7 @@ def display_highscores():
 
 def main():
 
-    create_account(conn, )
+    # TÄHÄN TULEE TESTI create_account(conn, )
 
     # Start the game by getting the player's credentials
     #player_name = login()
