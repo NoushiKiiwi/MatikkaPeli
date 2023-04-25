@@ -88,6 +88,8 @@ def login():
     users = c.fetchall()
     fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
+    print("testiprint", users)
+    
     # check if the user exists
     if username in users and users[username] == password:
         print(f"Welcome {username}!")
@@ -101,8 +103,6 @@ def login():
             print("Login succeeded")
         else:
             print("Incorrect password")
-    else:
-        print("Incorrect username")
     
     return username
 
