@@ -5,8 +5,8 @@ import hashlib
 import os
 
 # Connect to the SQL database
-conn = sqlite3.connect('mathgamedb.db')
-c = conn.cursor()
+c = sqlite3.connect('mathgamedb.db')
+c.isolation_level = None
 
 # Create tables if don't exist
 #Players username table
