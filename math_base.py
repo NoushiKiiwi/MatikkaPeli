@@ -85,7 +85,7 @@ def login():
 
     # Fetch the data from the players table
     test = c.execute("SELECT * FROM players")
-    users = c.fetchall()
+    users = test.fetchall()
     fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
 
     print(test)
@@ -234,7 +234,7 @@ def main():
             break
         
     # Close the SQL connection
-    conn.close()
+    c.close()
 
 if __name__ == "__main__":
     main()
