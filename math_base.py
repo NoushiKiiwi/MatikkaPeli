@@ -9,7 +9,6 @@ c = sqlite3.connect('mathgamedb.db')
 c.isolation_level = None
 
 # Create tables if don't exist
-#Players username table
 c.execute('''CREATE TABLE IF NOT EXISTS Players(
             username VARCHAR(40) PRIMARY KEY,
             hash VARCHAR(60),
@@ -28,7 +27,6 @@ c.execute('''CREATE TABLE IF NOT EXISTS ScoreTimed(
             gameMode VARCHAR(10), 
             seconds INTEGER)''')
 
-
 def account_menu():
     """Prints the login and account creation menu"""
     while True:
@@ -41,7 +39,6 @@ def account_menu():
             return choice
         else:
             print("Invalid choice. Please try again.")
-
 
 def main_menu():
     """Prints the menu and checks input"""
@@ -68,7 +65,8 @@ def create_account():
     while True:
         username = input("Create username: ")
         # Check if the username already exists in the database
-        result = c.execute("SELECT username FROM Players WHERE username = ?;", [username]).fetchone()
+        result = c.execute("SELECT username FROM Players WHERE username = ?;",
+                            [username]).fetchone()
         if result is None:
             break
         print("Username already exists. Please try another.")
@@ -76,11 +74,13 @@ def create_account():
     password = input("Create password: ")
 
     # Make secure password
-    hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), 
+                                          salt, 100000)
     # Insert password to database
-    c.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", [username, hashed_password, salt])
+    c.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", 
+              [username, hashed_password, salt])
 
-    print(f"Welcome {username} to the Math Game!")
+    print(f"\nWelcome {username} to the Math Game!")
 
     return username
 
@@ -99,21 +99,24 @@ def login():
     for user in users:
         if user[0] == username:
             # verify their password
-            fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchone()
+            fromdb = c.execute(
+                "SELECT username, hash, salt FROM Players WHERE username = ?;", 
+                [username]).fetchone()
             if fromdb is not None:
                 stored_hash = fromdb[1]
                 salt = fromdb[2]
-                input_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+                input_hash = hashlib.pbkdf2_hmac('sha256', 
+                                                 password.encode('utf-8'), 
+                                                 salt, 100000)
                 if input_hash == stored_hash:
-                    print(f"Welcome {username}!")
+                    print(f"\nWelcome {username}!")
                 else:
                     print("Incorrect password")
             else:
                 print("Incorrect username or password.")
             return username
-    print("Incorrect username or password.")
+    print("Incorrect username")
     return None
-
 
 
 def generate_problem():
@@ -157,16 +160,17 @@ def play_game(username):
             score += 1
             print("Correct!")
         else:
-            print(f"Incorrect. The right answer is {correctAnswer}. Your score was {score}.")
+            print(f"Incorrect. The right answer is {correctAnswer}.") 
+            print(f"Your score was {score}.")
             break
-    # In here update the normal table with the player's score
-    # Put SQL code to update the table here
+    #Updates the score table
     add_score(username, score)
 
 
 def add_score(username, score):
     """Add the score to the database"""
-    c.execute("INSERT INTO ScoreAmounts (username, score) VALUES (?, ?)", [username, score])
+    c.execute("INSERT INTO ScoreAmounts (username, score) VALUES (?, ?)", 
+              [username, score])
 
 
 def play_timed_game(username):
@@ -194,32 +198,32 @@ def play_timed_game(username):
         else:
             wrong += 1
     print(f"Times up! You got {score} correct and {wrong} wrong!")
-    # Update the timed table with the player's score
-    # Put SQL code to update the table here
+    # Updates the timed table with the player's score
     add_timedScore(username, score, 300)
 
 
 def add_timedScore(username, score, seconds):
     """Add the score to the database"""
-    c.execute("INSERT INTO ScoreTimed (username, score, seconds) VALUES (?, ?, ?)", [username, score, seconds])
+    c.execute(
+        "INSERT INTO ScoreTimed (username, score, seconds) VALUES (?, ?, ?)", 
+        [username, score, seconds])
 
 
 def display_highscores():
     """Display the highscores"""
-    normal_scores = c.execute("SELECT * FROM ScoreAmounts ORDER BY score DESC LIMIT 5").fetchall()
-    timed_scores = c.execute("SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
-    print("Normal Mode High Scores:")
+    normal_scores = c.execute(
+        "SELECT * FROM ScoreAmounts ORDER BY score DESC LIMIT 5").fetchall()
+    timed_scores = c.execute(
+        "SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
+    print("\nNormal Mode High Scores:")
     for score in normal_scores:
         print(f"{score[1]}: {score[2]}")
     print("\nTimed Mode High Scores:")
     for score in timed_scores:
         print(f"{score[1]}: {score[2]}")
 
-
 def main():
 
-    # Start the game by getting the player's credentials
-    #player_name = login()
     username = ""
     while True:
         account_choice = account_menu()
