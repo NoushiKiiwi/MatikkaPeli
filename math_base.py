@@ -61,17 +61,24 @@ def main_menu():
 
 
 def create_account():
-    """Create and user account and insert it to database"""
+    """Create a user account and insert it into the database"""
     salt = os.urandom(32)
 
-    #Ask user inputs
+    # Ask user inputs
     print("Create account:")
-    username = input("Create username: ")
+    while True:
+        username = input("Create username: ")
+        # Check if the username already exists in the database
+        result = c.execute("SELECT username FROM Players WHERE username = ?;", [username]).fetchone()
+        if result is None:
+            break
+        print("Username already exists. Please try another.")
+
     password = input("Create password: ")
 
-    #Make secure password
+    # Make secure password
     hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    #Insert password to database
+    # Insert password to database
     c.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", [username, hashed_password, salt])
 
     return username
