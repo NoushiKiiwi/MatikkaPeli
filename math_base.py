@@ -92,10 +92,11 @@ def login():
     print("testiprint", users)
     
     # check if the user exists
-    if username in users and users[username] == password:
-        print(f"Welcome {username}!")
-    else:
-        print("Incorrect username or password.")
+    for user in users:
+        if user[0] == username and user[1] == password:
+            print(f"Welcome {username}!")
+            return
+    print("Incorrect username or password.")
         
     #verify their password
     if len(fromdb) != 0:
