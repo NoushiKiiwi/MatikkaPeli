@@ -45,7 +45,6 @@ def account_menu():
 
 def main_menu():
     """Prints the menu and checks input"""
-    print("Welcome to the Math Game!")
     while True:
         print("\nMAIN MENU")
         print("1. See Highscores")
@@ -81,6 +80,8 @@ def create_account():
     # Insert password to database
     c.execute("INSERT INTO Players (username, hash, salt) VALUES (?, ?, ?); ", [username, hashed_password, salt])
 
+    print(f"Welcome {username} to the Math Game!")
+
     return username
 
 
@@ -93,26 +94,23 @@ def login():
     # Fetch the data from the players table
     test = c.execute("SELECT * FROM players")
     users = test.fetchall()
-    fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchall()
-
-    print(test)
-    print("testiprint", users)
     
     # check if the user exists
     for user in users:
         if user[0] == username and user[1] == password:
             print(f"Welcome {username}!")
-            return
-    print("Incorrect username or password.")
-        
+            continue  
     #verify their password
-    if len(fromdb) != 0:
-        verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
-        if verrattava_hash == fromdb[0][0]:
-            print("Login succeeded")
+        fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchone()
+        if len(fromdb) != 0:
+            #TypeError: a bytes-like object is required, not 'str'
+            verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
+            if verrattava_hash == fromdb[0][0]:
+                print("Login succeeded")
+            else:
+                print("Incorrect password")
         else:
-            print("Incorrect password")
-    
+            print("Incorrect username or password.")
     return username
 
 
@@ -245,4 +243,4 @@ def main():
     c.close()
 
 if __name__ == "__main__":
-    main()
+        main()
