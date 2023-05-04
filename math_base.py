@@ -210,10 +210,10 @@ def display_highscores():
     timed_scores = c.execute("SELECT * FROM ScoreTimed ORDER BY score DESC LIMIT 5").fetchall()
     print("Normal Mode High Scores:")
     for score in normal_scores:
-        print(f"{score[0]}: {score[1]}")
+        print(f"{score[1]}: {score[2]}")
     print("\nTimed Mode High Scores:")
     for score in timed_scores:
-        print(f"{score[0]}: {score[1]}")
+        print(f"{score[1]}: {score[2]}")
 
 
 def main():
