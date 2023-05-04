@@ -97,21 +97,23 @@ def login():
     
     # check if the user exists
     for user in users:
-        if user[0] == username and user[1] == password:
-            print(f"Welcome {username}!")
-            continue  
-    #verify their password
-        fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchone()
-        if len(fromdb) != 0:
-            #TypeError: a bytes-like object is required, not 'str'
-            verrattava_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), fromdb[0][1], 100000)
-            if verrattava_hash == fromdb[0][0]:
-                print("Login succeeded")
+        if user[0] == username:
+            # verify their password
+            fromdb = c.execute("SELECT username, hash, salt FROM Players WHERE username = ?;", [username]).fetchone()
+            if fromdb is not None:
+                stored_hash = fromdb[1]
+                salt = fromdb[2]
+                input_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+                if input_hash == stored_hash:
+                    print(f"Welcome {username}!")
+                else:
+                    print("Incorrect password")
             else:
-                print("Incorrect password")
-        else:
-            print("Incorrect username or password.")
-    return username
+                print("Incorrect username or password.")
+            return username
+    print("Incorrect username or password.")
+    return None
+
 
 
 def generate_problem():
