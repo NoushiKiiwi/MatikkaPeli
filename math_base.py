@@ -89,7 +89,6 @@ def login():
     """Ask for username and password and check if right from database"""
     # get user input
     username = input("Enter your username: ")
-    password = input("Enter your password: ")
 
     # Fetch the data from the players table
     test = c.execute("SELECT * FROM players")
@@ -99,6 +98,7 @@ def login():
     for user in users:
         if user[0] == username:
             # verify their password
+            password = input("Enter your password: ")
             fromdb = c.execute(
                 "SELECT username, hash, salt FROM Players WHERE username = ?;", 
                 [username]).fetchone()
@@ -111,12 +111,21 @@ def login():
                 if input_hash == stored_hash:
                     print(f"\nWelcome {username}!")
                 else:
-                    print("Incorrect password")
-            else:
-                print("Incorrect username or password.")
+                    print("Incorrect password, try again.")
+                    login()
+
             return username
+    
     print("Incorrect username")
-    return None
+
+    while True:
+        choice = input("Do you want to try again? (y/n)")
+        if choice.lower() == "y":
+            return login()
+        elif choice.lower() == "n":
+            quit()
+        else:
+            print("Please input only y or n")
 
 
 def generate_problem():
